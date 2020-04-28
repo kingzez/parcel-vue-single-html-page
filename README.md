@@ -1,5 +1,16 @@
 # Parcel Vue Single HTML Page
 
+## Feature
+
+- 📱移动端
+- 🚀适用于快速搭建原型应用
+- 💀适用于兼容老旧前后端未分离项目
+- 🔥支持热模块替换
+- 💅支持 PostCSS
+- 🥳内置 Mand-Mobile UI（px2rem）
+
+## Getting Started
+
 ### Develop
 
 ```shell
