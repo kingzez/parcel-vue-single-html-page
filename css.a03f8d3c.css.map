@@ -1,0 +1,1 @@
+{"version":3,"sources":["css/css/index.less"],"names":[],"mappings":"AAAA;EACE,WAAA;EACA,uBAAA;EACA,gBAAA;;AAHF;EAKI,WAAA","file":"css.a03f8d3c.css","sourceRoot":"../src","sourcesContent":[".container {\n  width: 100%;\n  padding: 20px 32px;\n  overflow: hidden;\n  .opt-btn {\n    width: 300px;\n  }\n}\n"]}
