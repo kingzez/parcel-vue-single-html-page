@@ -2,8 +2,102 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Parcel Vue Single HTML Page</title>
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover"
+    />
+    <title>房态采集</title>
+    <script src="./js/responsive.js"></script>
+    <link rel="stylesheet" href="./lib/mand-mobile@2.5.9/mand-mobile.css" />
+    <link rel="stylesheet" href="./css/common.less" />
+    <link rel="stylesheet" href="./css/index.less" />
   </head>
-  <body></body>
+
+  <body>
+    <div id="app">
+      <div class="container">
+        {{ message }}
+        <img :src="res.avatar_url" alt="avatar" style="width: 130px;" />
+        <md-button @click="basicDialog.open = true">basic dialog</md-button>
+        <md-dialog
+          title="Title"
+          :closable="true"
+          v-model="basicDialog.open"
+          :btns="basicDialog.btns"
+        >
+          人生的刺，就在这里，留恋着不肯快走的，偏是你所不留恋的东西..
+        </md-dialog>
+        <div class="step-two">
+          <md-field>
+            <md-cell-item title="是否毛坯">
+              <md-switch slot="right" v-model="open" />
+            </md-cell-item>
+            <md-cell-item title="动作条目" arrow @click="onClick" />
+          </md-field>
+        </div>
+      </div>
+    </div>
+    <!--for development -->
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <!-- for production -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/vue"></script>  -->
+    <script src="https://cdn.jsdelivr.net/npm/mand-mobile@2.5.9/lib/mand-mobile.umd.js"></script>
+    <script>
+      Vue.use(window['mand-mobile'])
+
+      const app = new Vue({
+        el: '#app',
+        data() {
+          return {
+            message: 'Hello Vue!',
+            basicDialog: {
+              open: false,
+              btns: [
+                {
+                  text: '取消',
+                  handler: this.onBasicCancel,
+                },
+                {
+                  text: '确认',
+                  handler: this.onBasicConfirm,
+                },
+              ],
+            },
+            open: false,
+            res: {},
+          }
+        },
+        created() {
+          this.getUserInfo()
+        },
+        methods: {
+          getUserInfo() {
+            fetch('https://api.github.com/users/vuejs')
+              .then((r) => r.json())
+              .then((data) => {
+                this.res = data
+                console.log(data)
+              })
+          },
+          onBasicConfirm() {
+            this.$toast({
+              content: '你点击了确认',
+            })
+            this.basicDialog.open = false
+          },
+          onBasicCancel() {
+            this.$toast({
+              content: '你点击了取消',
+            })
+            this.basicDialog.open = false
+          },
+          onClick() {
+            this.$dialog.alert({
+              content: '点击了',
+            })
+          },
+        },
+      })
+    </script>
+  </body>
 </html>
