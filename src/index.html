@@ -18,32 +18,12 @@
       <div class="container">
         <md-field class="form-container">
           <md-input-item
-            title="手机"
-            type="phone"
-            v-model="form.phone"
-            placeholder="请输入法人手机号"
-            is-virtual-keyboard
-            virtual-keyboard-vm="numberKeyBoard"
-            clearable
+            title="店铺名称"
+            v-model="form.name"
+            placeholder="请输入店铺名称"
           ></md-input-item>
-          <md-number-keyboard
-            type="simple"
-            ref="numberKeyBoard"
-          ></md-number-keyboard>
-          <md-input-item
-            title="详细地址"
-            v-model="form.address"
-            placeholder="填写详细地址"
-          ></md-input-item>
-          <md-field-item
-            title="店铺分类"
-            :content="form.type"
-            @click="showSelector"
-            arrow
-            solid
-          ></md-field-item>
           <md-textarea-item
-            title="店铺介绍"
+            title="店铺简介"
             :autosize="true"
             v-model="form.intro"
             :max-length="300"
@@ -51,6 +31,18 @@
             placeholder="输入店铺简介，1-300个字符"
           >
           </md-textarea-item>
+          <md-field-item
+            title="店铺分类"
+            :content="form.type"
+            @click="showSelector"
+            arrow
+            solid
+          ></md-field-item>
+          <md-input-item
+            title="详细地址"
+            v-model="form.address"
+            placeholder="填写详细地址"
+          ></md-input-item>
         </md-field>
 
         <md-selector
@@ -64,19 +56,39 @@
         ></md-selector>
 
         <div class="image-upload">
-          <div class="image-item">
-            <img src="./images/store.png" alt="" />
+          <div
+            class="image-item"
+            :style="{ backgroundImage: 'url(' + form.storePic + ')' }"
+            @click="chooseFile('storePic')"
+          >
+            <img src="./images/reupload.jpg" v-if="form.storePic" />
+            <img src="./images/store.png" v-else />
           </div>
-          <div class="image-item">
-            <img src="./images/license.png" alt="" />
+          <div
+            class="image-item"
+            :style="{ backgroundImage: 'url(' + form.licensePic + ')' }"
+            @click="chooseFile('licensePic')"
+          >
+            <img src="./images/reupload.jpg" v-if="form.licensePic" />
+            <img src="./images/license.png" v-else />
           </div>
         </div>
         <div class="image-upload">
-          <div class="image-item">
-            <img src="./images/id_front.png" alt="" />
+          <div
+            class="image-item"
+            :style="{ backgroundImage: 'url(' + form.IDCardFrontPic + ')' }"
+            @click="chooseFile('IDCardFrontPic')"
+          >
+            <img src="./images/reupload.jpg" v-if="form.IDCardFrontPic" />
+            <img src="./images/id_front.png" v-else />
           </div>
-          <div class="image-item">
-            <img src="./images/id_back.png" alt="" />
+          <div
+            class="image-item"
+            :style="{ backgroundImage: 'url(' + form.IDCardBackPic + ')' }"
+            @click="chooseFile('IDCardBackPic')"
+          >
+            <img src="./images/reupload.jpg" v-if="form.IDCardBackPic" />
+            <img src="./images/id_back.png" v-else />
           </div>
         </div>
 
@@ -91,6 +103,7 @@
     <!-- for production -->
     <!-- <script src="https://cdn.jsdelivr.net/npm/vue"></script>  -->
     <script src="https://cdn.jsdelivr.net/npm/mand-mobile@2.5.12/lib/mand-mobile.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script>
       Vue.use(window['mand-mobile'])
 
@@ -99,10 +112,14 @@
         data() {
           return {
             form: {
-              phone: '',
-              address: '',
-              type: '',
+              name: '',
               intro: '',
+              type: '',
+              address: '',
+              storePic: '',
+              licensePic: '',
+              IDCardFrontPic: '',
+              IDCardBackPic: '',
             },
             isStoreTypeShow: false,
             options: [
@@ -123,7 +140,7 @@
               { value: '1108', text: '旅游' },
             ],
             agreeConf: {
-              checked: false,
+              checked: true,
             },
             actions: [
               {
@@ -140,14 +157,24 @@
           onSelectorChoose({ text }) {
             this.form.type = text
           },
+          chooseFile(pic) {
+            // 选择文件上传
+            const fileUrl =
+              'https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=1321277512,1895429390&fm=26&gp=0.jpg'
+            this.form[pic] = fileUrl
+          },
           submit() {
-            if (!this.agreeConf.checked) {
-              return this.$toast({
-                content: '请选择协议',
-              })
-            }
+            if (!this.agreeConf.checked) return this.$toast.info('请选择协议')
 
-            console.log('submit', this.form)
+            const canSubmit = Object.values(this.form).every((v) => v)
+            if (!canSubmit) return this.$toast.info('请补充未填项')
+
+            // console.log('submit', this.form)
+            axios.get('https://api.github.com/users/kingzez').then((res) => {
+              console.log(res)
+              if (res.status === 200) return this.$toast.succeed('提交成功')
+              this.$toast.failed('提交失败')
+            })
           },
         },
       })
