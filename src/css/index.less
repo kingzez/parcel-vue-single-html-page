@@ -1,8 +1,35 @@
 .container {
   width: 100%;
-  padding: 20px 32px;
+  padding: 20px 32px 160px 32px;
   overflow: hidden;
-  .opt-btn {
-    width: 300px;
+  background-color: #f0f3f7;
+  .form-container {
+    border-radius: 18px;
+  }
+
+  .image-upload {
+    margin: 20px 0;
+    display: flex;
+    .image-item {
+      background-color: #fff;
+      border-radius: 18px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      &:first-child {
+        margin-right: 20px;
+      }
+      img {
+        width: 100%;
+        border-radius: 18px;
+      }
+    }
+  }
+
+  .agree {
+    font-size: 28px;
+    a {
+      color: #5878b4;
+    }
   }
 }

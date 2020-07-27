@@ -16,25 +16,74 @@
   <body>
     <div id="app">
       <div class="container">
-        {{ message }}
-        <img :src="res.avatar_url" alt="avatar" style="width: 130px;" />
-        <md-button @click="basicDialog.open = true">basic dialog</md-button>
-        <md-dialog
-          title="Title"
-          :closable="true"
-          v-model="basicDialog.open"
-          :btns="basicDialog.btns"
-        >
-          人生的刺，就在这里，留恋着不肯快走的，偏是你所不留恋的东西..
-        </md-dialog>
-        <div class="step-two">
-          <md-field>
-            <md-cell-item title="是否毛坯">
-              <md-switch slot="right" v-model="open" />
-            </md-cell-item>
-            <md-cell-item title="动作条目" arrow @click="onClick" />
-          </md-field>
+        <md-field class="form-container">
+          <md-input-item
+            title="手机"
+            type="phone"
+            v-model="form.phone"
+            placeholder="请输入法人手机号"
+            is-virtual-keyboard
+            virtual-keyboard-vm="numberKeyBoard"
+            clearable
+          ></md-input-item>
+          <md-number-keyboard
+            type="simple"
+            ref="numberKeyBoard"
+          ></md-number-keyboard>
+          <md-input-item
+            title="详细地址"
+            v-model="form.address"
+            placeholder="填写详细地址"
+          ></md-input-item>
+          <md-field-item
+            title="店铺分类"
+            :content="form.type"
+            @click="showSelector"
+            arrow
+            solid
+          ></md-field-item>
+          <md-textarea-item
+            title="店铺介绍"
+            :autosize="true"
+            v-model="form.intro"
+            :max-length="300"
+            :max-height="150"
+            placeholder="输入店铺简介，1-300个字符"
+          >
+          </md-textarea-item>
+        </md-field>
+
+        <md-selector
+          v-model="isStoreTypeShow"
+          default-value="2"
+          :data="options"
+          max-height="320px"
+          title="店铺分类"
+          large-radius
+          @choose="onSelectorChoose"
+        ></md-selector>
+
+        <div class="image-upload">
+          <div class="image-item">
+            <img src="./images/store.png" alt="" />
+          </div>
+          <div class="image-item">
+            <img src="./images/license.png" alt="" />
+          </div>
         </div>
+        <div class="image-upload">
+          <div class="image-item">
+            <img src="./images/id_front.png" alt="" />
+          </div>
+          <div class="image-item">
+            <img src="./images/id_back.png" alt="" />
+          </div>
+        </div>
+
+        <md-agree class="agree" v-model="agreeConf.checked">
+          我已阅读并同意<a>《商铺入住协议》</a>
+        </md-agree>
+        <md-action-bar :actions="actions"></md-action-bar>
       </div>
     </div>
     <!--for development -->
@@ -49,52 +98,56 @@
         el: '#app',
         data() {
           return {
-            message: 'Hello Vue!',
-            basicDialog: {
-              open: false,
-              btns: [
-                {
-                  text: '取消',
-                  handler: this.onBasicCancel,
-                },
-                {
-                  text: '确认',
-                  handler: this.onBasicConfirm,
-                },
-              ],
+            form: {
+              phone: '',
+              address: '',
+              type: '',
+              intro: '',
             },
-            open: false,
-            res: {},
+            isStoreTypeShow: false,
+            options: [
+              { value: '1073', text: '餐饮美食' },
+              { value: '1074', text: '休闲娱乐' },
+              { value: '1096', text: '水果蔬菜' },
+              { value: '1097', text: '鲜花绿植' },
+              { value: '1098', text: '商超便利' },
+              { value: '1099', text: '亲子' },
+              { value: '1100', text: '丽人' },
+              { value: '1101', text: '教育培训' },
+              { value: '1102', text: '运动健身' },
+              { value: '1103', text: '酒店住宿' },
+              { value: '1104', text: '婚庆摄影' },
+              { value: '1105', text: '家装' },
+              { value: '1106', text: '汽车' },
+              { value: '1107', text: '其他' },
+              { value: '1108', text: '旅游' },
+            ],
+            agreeConf: {
+              checked: false,
+            },
+            actions: [
+              {
+                text: '提交',
+                onClick: this.submit,
+              },
+            ],
           }
         },
-        created() {
-          this.getUserInfo()
-        },
         methods: {
-          getUserInfo() {
-            fetch('https://api.github.com/users/vuejs')
-              .then((r) => r.json())
-              .then((data) => {
-                this.res = data
-                console.log(data)
+          showSelector() {
+            this.isStoreTypeShow = true
+          },
+          onSelectorChoose({ text }) {
+            this.form.type = text
+          },
+          submit() {
+            if (!this.agreeConf.checked) {
+              return this.$toast({
+                content: '请选择协议',
               })
-          },
-          onBasicConfirm() {
-            this.$toast({
-              content: '你点击了确认',
-            })
-            this.basicDialog.open = false
-          },
-          onBasicCancel() {
-            this.$toast({
-              content: '你点击了取消',
-            })
-            this.basicDialog.open = false
-          },
-          onClick() {
-            this.$dialog.alert({
-              content: '点击了',
-            })
+            }
+
+            console.log('submit', this.form)
           },
         },
       })
